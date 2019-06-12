@@ -14,21 +14,21 @@
         <ion-item>
             <ion-label text-wrap>
                 <ion-text>Calories burned: 750</ion-text><p></p>
-                <ion-text color="medium"><h6>Still 250 kcal to reach your goal, don't give up.</h6></ion-text>
+                <ion-text color="medium"><h6>Still {{remaining}} kcal to reach your goal, don't give up.</h6></ion-text>
             </ion-label>
           <google-chart [data]="caloriesBurnedChartData"></google-chart>
         </ion-item>
         <ion-item>
           <ion-thumbnail slot="start"><ion-img src="/assets/icon/heart_rate.png" ></ion-img></ion-thumbnail>
           <ion-label text-wrap>
-            <ion-text>Heart rate: 78 bpm</ion-text><p></p>
+            <ion-text>Heart rate: {{heartRate}}</ion-text><p></p>
             <ion-text color="medium"><h6>You are in great shape!</h6></ion-text>
           </ion-label>
         </ion-item>
         <ion-item>
           <ion-thumbnail slot="start"><ion-img src="/assets/icon/weight.png"></ion-img></ion-thumbnail>
           <ion-label text-wrap>
-            <ion-text>Weight: 72.5</ion-text><p></p>
+            <ion-text>Weight: {{user.weight}}</ion-text><p></p>
             <ion-text color="medium"><h6>7 novembre 2018 09:01</h6></ion-text>
           </ion-label>
         </ion-item>
@@ -36,7 +36,7 @@
         <ion-item lines="none">
           <ion-thumbnail slot="start"><ion-img src="/assets/icon/activity.png"></ion-img></ion-thumbnail>
           <ion-label text-wrap>
-            <ion-text>Last activity: 4 day ago</ion-text><p></p>
+            <ion-text>Last activity: {{day}}</ion-text><p></p>
             <ion-text color="medium"><h6>I'am waiting for new beginning, it is never enough.</h6></ion-text>
           </ion-label>
         </ion-item>

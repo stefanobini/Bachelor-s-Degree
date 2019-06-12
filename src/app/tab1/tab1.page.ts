@@ -3,6 +3,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from '../models/user.model';
 import { Storage } from '@ionic/storage';
+import { UserService } from '../services/user.service';
 
 declare var google;
 
@@ -21,21 +22,25 @@ export class Tab1Page implements OnInit {
   caloriesBurnedPushUpChart;
   heartRatePushUpChart;
   slide;
-  user: User = new User("username", "email", "password", "name", "surname", 75, 24, "M", 1.75, 500);
+  user: User = new User("username", "email", "password", "name", "surname", 75, 24, "M", 1.75, 0);
+  heartRate: number = 0;
+  day: number = 0;
+  remaining: number = 0;
 
   constructor(private geolocation: Geolocation,
     private authService: AuthService,
+    private userService: UserService,
     private storage: Storage) {}
 
   ngOnInit() {
-    this.drawStateCharts();
-    //this.loadMap();
+    this.loadMap();
   }
 
   ionViewWillEnter() {
     this.storage.get('user').then( user => {
       console.log("success get storage: "+user.username);
       this.user = user;
+      this.drawStateCharts();
     }, err => {
       console.log('Error durig get storage')
     })
@@ -62,125 +67,165 @@ export class Tab1Page implements OnInit {
   }
   
   drawStateCharts() {
-    this.caloriesBurnedChartData = {
-      chartType: 'PieChart',
-      dataTable: [
-        ['Languages', 'Percent'],
-        ['Burned',     750],
-        ['Remaining',      250]
-      ],
-      options: {
-        'pieHole': 0.65,
-        'legend': 'none',
-        'title': '',
-        'width': 100,
-        'height': 100,
-        colors: ['#d33939', '#86888f'],
-        pieSliceTextStyle: {color: '#f4f5f8', fontSize: 3},
-        pieSliceBorderColor: '#383a3e'
+    var dataPieChart: number;
+    this.userService.caloriesBurnedToday(this.user.username).subscribe( data => {
+      console.log("kcal today = " + data);
+      dataPieChart = data;
+      this.remaining = ((this.user.kcalGoal-dataPieChart) < 0) ? 0 : this.user.kcalGoal-dataPieChart;
+      this.caloriesBurnedChartData = {
+        chartType: 'PieChart',
+        dataTable: [
+          ['Languages', 'Percent'],
+          ['Burned',    dataPieChart],
+          ['Remaining', this.remaining]
+        ],
+        options: {
+          'pieHole': 0.55,
+          'legend': 'none',
+          'title': '',
+          'width': 100,
+          'height': 100,
+          colors: ['#d33939', '#86888f'],
+          pieSliceTextStyle: {color: '#f4f5f8', fontSize: 3},
+          pieSliceBorderColor: '#383a3e'
+        }
+      };
+    });
+    var dataLineChart: number[];
+    this.userService.caloriesBurnedLast7Day(this.user.username).subscribe( data => {
+      console.log("total kcal last 7 day = " + data);
+      dataLineChart = data;
+      this.day = 0;
+      while((this.day < 7) && (dataLineChart[this.day] == 0)){
+        this.day++;
       }
-    };
-    this.activitiesChartData = {
-      chartType: 'LineChart',
-      dataTable: [
-        ['Week day', 'Calories'],
-        ['15 Gen', 50],
-        ['16 Gen', 150],
-        ['17 Gen', 700],
-        ['18 Gen', 500],
-        ['19 Gen', 900],
-        ['20 Gen', 300],
-        ['21 Gen', 100]
-      ],
-      options: {
-        'legend': 'none',
-        'title': '',
-        color: '',
-        chartArea:{left: '12%', width:'80%'}
+      this.activitiesChartData = {
+        chartType: 'LineChart',
+        dataTable: [
+          ['Week day', 'Calories'],
+          ['15 Gen', dataLineChart[6]],
+          ['16 Gen', dataLineChart[5]],
+          ['17 Gen', dataLineChart[4]],
+          ['18 Gen', dataLineChart[3]],
+          ['19 Gen', dataLineChart[2]],
+          ['20 Gen', dataLineChart[1]],
+          ['21 Gen', dataLineChart[0]]
+        ],
+        options: {
+          'legend': 'none',
+          'title': '',
+          color: '',
+          chartArea:{left: '12%', width:'80%'}
+        }
       }
-    }
+    });
+    this.heartRate = 0;
+    this.userService.heartRateAverageToday(this.user.username).subscribe( data => {
+      console.log("heart rate today = " + data);
+      this.heartRate = data;
+    })
   }
 
   drawWalkingCharts() {
-    this.caloriesBurnedWalkingChart = {
-      chartType: 'LineChart',
-      dataTable: [
-        ['Week day', 'Calories'],
-        ['15 Gen', 50],
-        ['16 Gen', 150],
-        ['17 Gen', 700],
-        ['18 Gen', 500],
-        ['19 Gen', 900],
-        ['20 Gen', 300],
-        ['21 Gen', 100]
-      ],
-      options: {
-        'legend': 'none',
-        'title': '',
-        color: '',
-        chartArea:{left: '12%', width:'80%'}
+    var dataKcalWalkingChart: number[];
+    this.userService.caloriesBurnedLast7DayActivity(this.user.username, 'Camminata').subscribe( data => {
+      console.log("kcal walking last 7 day = " + data);
+      dataKcalWalkingChart = data;
+      this.caloriesBurnedWalkingChart = {
+        chartType: 'LineChart',
+        dataTable: [
+          ['Week day', 'Calories'],
+          ['15 Gen', dataKcalWalkingChart[6]],
+          ['16 Gen', dataKcalWalkingChart[5]],
+          ['17 Gen', dataKcalWalkingChart[4]],
+          ['18 Gen', dataKcalWalkingChart[3]],
+          ['19 Gen', dataKcalWalkingChart[2]],
+          ['20 Gen', dataKcalWalkingChart[1]],
+          ['21 Gen', dataKcalWalkingChart[0]]
+        ],
+        options: {
+          'legend': 'none',
+          'title': '',
+          color: '',
+          chartArea:{left: '12%', width:'80%'}
+        }
       }
-    }
-    this.heartRateWalkingChart = {
-      chartType: 'LineChart',
-      dataTable: [
-        ['Week day', 'Heart rate'],
-        ['15 Gen', 50],
-        ['16 Gen', 80],
-        ['17 Gen', 72],
-        ['18 Gen', 102],
-        ['19 Gen', 64],
-        ['20 Gen', 91],
-        ['21 Gen', 118]
-      ],
-      options: {
-        'legend': 'none',
-        'title': '',
-        color: '',
-        chartArea:{left: '12%', width:'80%'}
+    });
+    var dataHRWalkingChart: number[];
+    this.userService.heartRateAvarageLast7DayActivity(this.user.username, 'Camminata').subscribe( data => {
+      console.log("HR walking last 7 day = " + data);
+      dataHRWalkingChart = data;
+      this.heartRateWalkingChart = {
+        chartType: 'LineChart',
+        dataTable: [
+          ['Week day', 'Heart rate'],
+          ['15 Gen', dataHRWalkingChart[6]],
+          ['16 Gen', dataHRWalkingChart[5]],
+          ['17 Gen', dataHRWalkingChart[4]],
+          ['18 Gen', dataHRWalkingChart[3]],
+          ['19 Gen', dataHRWalkingChart[2]],
+          ['20 Gen', dataHRWalkingChart[1]],
+          ['21 Gen', dataHRWalkingChart[0]]
+        ],
+        options: {
+          'legend': 'none',
+          'title': '',
+          color: '',
+          chartArea:{left: '12%', width:'80%'}
+        }
       }
-    }
+    });
   }
 
   drawPushUpCharts() {
-    this.caloriesBurnedPushUpChart = {
-      chartType: 'LineChart',
-      dataTable: [
-        ['Week day', 'Calories'],
-        ['15 Gen', 50],
-        ['16 Gen', 150],
-        ['17 Gen', 700],
-        ['18 Gen', 500],
-        ['19 Gen', 900],
-        ['20 Gen', 300],
-        ['21 Gen', 100]
-      ],
-      options: {
-        'legend': 'none',
-        'title': '',
-        color: '',
-        chartArea:{left: '12%', width:'80%'}
+    var dataKcalPushupChart: number[];
+    this.userService.caloriesBurnedLast7DayActivity(this.user.username, 'Piegamenti').subscribe( data => {
+      console.log("kcal pushup last 7 day = " + data);
+      dataKcalPushupChart = data;
+      this.caloriesBurnedPushUpChart = {
+        chartType: 'LineChart',
+        dataTable: [
+          ['Week day', 'Calories'],
+          ['15 Gen', dataKcalPushupChart[6]],
+          ['16 Gen', dataKcalPushupChart[5]],
+          ['17 Gen', dataKcalPushupChart[4]],
+          ['18 Gen', dataKcalPushupChart[3]],
+          ['19 Gen', dataKcalPushupChart[2]],
+          ['20 Gen', dataKcalPushupChart[1]],
+          ['21 Gen', dataKcalPushupChart[0]]
+        ],
+        options: {
+          'legend': 'none',
+          'title': '',
+          color: '',
+          chartArea:{left: '12%', width:'80%'}
+        }
       }
-    }
-    this.heartRatePushUpChart = {
-      chartType: 'LineChart',
-      dataTable: [
-        ['Week day', 'Heart rate'],
-        ['15 Gen', 50],
-        ['16 Gen', 80],
-        ['17 Gen', 72],
-        ['18 Gen', 102],
-        ['19 Gen', 64],
-        ['20 Gen', 91],
-        ['21 Gen', 118]
-      ],
-      options: {
-        'legend': 'none',
-        'title': '',
-        color: '',
-        chartArea:{left: '12%', width:'80%'}
+    });
+    var dataHRPushupChart: number[];
+    this.userService.heartRateAvarageLast7DayActivity(this.user.username, 'Piegamenti').subscribe( data => {
+      console.log("HR pushup last 7 day = " + data);
+      dataHRPushupChart = data;
+      this.heartRatePushUpChart = {
+        chartType: 'LineChart',
+        dataTable: [
+          ['Week day', 'Heart rate'],
+          ['15 Gen', dataHRPushupChart[6]],
+          ['16 Gen', dataHRPushupChart[5]],
+          ['17 Gen', dataHRPushupChart[4]],
+          ['18 Gen', dataHRPushupChart[3]],
+          ['19 Gen', dataHRPushupChart[2]],
+          ['20 Gen', dataHRPushupChart[1]],
+          ['21 Gen', dataHRPushupChart[0]]
+        ],
+        options: {
+          'legend': 'none',
+          'title': '',
+          color: '',
+          chartArea:{left: '12%', width:'80%'}
+        }
       }
-    }
+    });
   }
 
 
