@@ -15,13 +15,13 @@
     </ion-item>
     <ion-item>
       <ion-label>Password</ion-label>
-      <ion-input [(ngModel)]="password" placeholder="username" type="password"></ion-input>
+      <ion-input [(ngModel)]="password" placeholder="password" type="password"></ion-input>
     </ion-item>
   </ion-list>
 
   <div class="spacer" style="height: 50px;"></div>
   
-  <ion-button expand="block" color="danger" mode="ios" type="submit">Signup</ion-button>
+  <ion-button expand="block" color="danger" mode="ios" (click)="signup()">Signup</ion-button>
   
   <div class="ion-text-center"><ion-button fill="clear" color="danger" mode="ios" (click)="login()">Or login with an existing account</ion-button></div>
 </ion-content>

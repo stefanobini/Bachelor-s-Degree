@@ -37,8 +37,9 @@ export class AuthService {
     })
   }
 
-  signup(user: User) {
-    return this.http.post(this.env.API_URL + 'auth/signup', user)
+  signup(username: string) {
+    return this.http.get<User>(this.env.API_URL + 'users/' + username, 
+    {headers: new HttpHeaders({'Accept': 'application/json'})})
   }
 
   /*user() {

@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 //import { ModalController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { AlertService } from 'src/app/services/alert.service';
+import { Storage } from '@ionic/storage';
 import { User } from 'src/app/models/user.model';
-//import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-signup',
@@ -17,11 +17,11 @@ export class SignupPage implements OnInit {
   email: string;
   password: string;
 
-  constructor(private route: Router, 
+  constructor(private router: Router, 
     //private modalController: ModalController,
     private authService: AuthService,
-    private alertService: AlertService/*,
-    private storage: Storage*/) {}
+    private alertService: AlertService,
+    private storage: Storage) {}
 
   ngOnInit() {}
 
@@ -32,7 +32,7 @@ export class SignupPage implements OnInit {
 
   login() {
     //this.dismissRegister();
-    this.route.navigateByUrl('/login');
+    this.router.navigateByUrl('/login');
   }
 
   /*signup(form: NgForm) {
@@ -59,11 +59,17 @@ export class SignupPage implements OnInit {
 
   signup(){
     // fare check su ion-input vuoti
-    this.authService.signup(new User(this.username, this.email, this.password, "name", "surname", 75, 25, "M", 1.75, 500))
+    this.authService.signup(this.username)
     .subscribe(
       user => {
-        this.alertService.presentToast("Account create");
-        //this.storage.set("user", user);
+        if (user != null)
+          this.alertService.presentToast("The username or email already exist, try again!");
+        else{
+          this.alertService.presentToast("Congratulation, account created successfully!");
+          user = new User(this.username, this.email, this.password, "name", "surname", 75, 24, "M", 1.75, 500);
+          this.storage.set("user", user);
+          this.router.navigateByUrl('/profile-information');
+        }
       }
     )
   }

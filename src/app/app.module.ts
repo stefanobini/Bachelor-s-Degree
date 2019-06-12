@@ -9,13 +9,12 @@ import { AppComponent } from './app.component';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { HttpClientModule } from '@angular/common/http';
-//import { Storage } from '@ionic/storage';
-//import { IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule/*, IonicStorageModule.forRoot()*/ ],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, IonicStorageModule.forRoot() ],
   providers: [
     StatusBar,
     SplashScreen,

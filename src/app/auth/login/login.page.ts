@@ -3,6 +3,7 @@ import { Router } from '@angular/router'
 import { ModalController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { AlertService } from 'src/app/services/alert.service';
+import { Storage } from '@ionic/storage';
 import { User } from 'src/app/models/user.model';
 //import { Users } from "app/classes/users";
 
@@ -20,7 +21,8 @@ export class LoginPage implements OnInit {
   constructor(private route: Router, 
     private modalController: ModalController, 
     private authService: AuthService, 
-    private alertService: AlertService) { }
+    private alertService: AlertService,
+    private storage: Storage) { }
 
   ngOnInit() {}
 
@@ -54,8 +56,8 @@ export class LoginPage implements OnInit {
     this.authService.login(this.username, this.password).subscribe(user => {
       if (user != null){
         this.alertService.presentToast('Welcome');
+        this.storage.set('user', user);
         this.authService.isLoggedIn = true;
-        // mettere lo storage
         this.route.navigateByUrl('/tabs');
       } else 
       this.alertService.presentToast('Username or password is wrong!');

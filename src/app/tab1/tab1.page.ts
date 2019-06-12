@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from '../models/user.model';
+import { Storage } from '@ionic/storage';
 
 declare var google;
 
@@ -23,7 +24,8 @@ export class Tab1Page implements OnInit {
   user: User = new User("username", "email", "password", "name", "surname", 75, 24, "M", 1.75, 500);
 
   constructor(private geolocation: Geolocation,
-    private authService: AuthService) {}
+    private authService: AuthService,
+    private storage: Storage) {}
 
   ngOnInit() {
     this.drawStateCharts();
@@ -31,11 +33,12 @@ export class Tab1Page implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.authService.user(this.user.username).subscribe(
-      user => {
-        this.user = user;
-      }
-    );
+    this.storage.get('user').then( user => {
+      console.log("success get storage: "+user.username);
+      this.user = user;
+    }, err => {
+      console.log('Error durig get storage')
+    })
   }
 
   // ************* CHARTS *****************

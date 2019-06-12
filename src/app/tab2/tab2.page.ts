@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { AlertService } from '../services/alert.service';
 import { User } from '../models/user.model';
 import { UserService } from '../services/user.service';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-tab2',
@@ -17,32 +18,32 @@ export class Tab2Page {
   constructor(private router: Router,
     private authService: AuthService,
     private alertService: AlertService,
-    private userService: UserService) { }
+    private userService: UserService,
+    private storage: Storage) { }
 
   ionViewWillEnter() {
-    this.authService.user('Umberto7').subscribe(
-      user => {
-        this.user = user;
-      }
-    );
+    this.storage.get('user').then( user => {
+      console.log("success get storage: "+user.username);
+      this.user = user;
+    }, err => {
+      console.log('Error durig get storage')
+    })
   }
-
-  /*ionViewWillEnter() {
-    user: User = this.storage.get('user')
-  }*/
 
   save() {
     this.userService.update(this.user).subscribe(
       user => {
         this.alertService.presentToast("Update profile");
-        //this.user = user;
-        //this.storage.set('user', this.user);
+        this.storage.set('user', user);
       }
     )
   }
 
   logout() {
-    this.router.navigateByUrl('/login');
+    this.storage.remove('user').then( success => {
+      this.alertService.presentToast('Logout performed');
+      this.router.navigateByUrl('/login');
+    })
   }
 
 }
