@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar><ion-title color="danger">Signup</ion-title></ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="spacer" style="height: 100px;"></div>
+  <ion-list>
+    <ion-item>
+      <ion-label>Username</ion-label>
+      <ion-input [(ngModel)]="username" placeholder="username" clear-input="true"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Email</ion-label>
+      <ion-input [(ngModel)]="email" placeholder="name@provider.domain" type="email" clear-input="true" inputmode="email"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Password</ion-label>
+      <ion-input [(ngModel)]="password" placeholder="username" type="password"></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <div class="spacer" style="height: 50px;"></div>
+  
+  <ion-button expand="block" color="danger" mode="ios" type="submit">Signup</ion-button>
+  
+  <div class="ion-text-center"><ion-button fill="clear" color="danger" mode="ios" (click)="login()">Or login with an existing account</ion-button></div>
+</ion-content>

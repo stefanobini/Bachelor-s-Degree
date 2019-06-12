@@ -1,0 +1,23 @@
+<ion-header>
+    <ion-toolbar><ion-title color="danger">Login</ion-title></ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="spacer" style="height: 130px;"></div>
+    <ion-list>
+      <ion-item>
+        <ion-label>Username</ion-label>
+        <ion-input [(ngModel)]="username" placeholder="name@provider.domain" clear-input="true"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Password</ion-label>
+        <ion-input [(ngModel)]="password" placeholder="password" type="password"></ion-input>
+      </ion-item>
+    </ion-list>
+  
+  <div class="spacer" style="height: 50px;"></div>
+  
+  <ion-button expand="block" color="danger" mode="ios" (click)="login()">Login</ion-button>
+  
+  <div class="ion-text-center"><ion-button fill="clear" color="danger" mode="ios" (click)="signup()">Or create an account</ion-button></div>
+</ion-content>

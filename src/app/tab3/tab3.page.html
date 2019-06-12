@@ -1,0 +1,23 @@
+<ion-content padding="true" class="manual-remove-top-padding">
+  <ion-img src="\assets\icon\full.png"></ion-img>
+  
+  <ion-list>
+    <ion-item>
+      <ion-label>Bluetooth</ion-label>
+      <ion-toggle [(ngModel)]="toggleValue" (ionChange)="checkToggle()"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label text-wrap>MAC address</ion-label>
+      <ion-input placeholder="standard format"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-button color="success" slot='start' (click)="turn('1')">Led on</ion-button>
+      <ion-button color="danger" slot='end' (click)="turn('0')">Led off</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-text-center"><ion-button fill="clear" color="danger" mode="ios" (click)="connect()" [disabled]="!toggleValue">Connect</ion-button></div>
+
+  <ion-label>Message: {{message}}</ion-label>
+
+</ion-content>

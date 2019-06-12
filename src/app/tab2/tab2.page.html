@@ -1,0 +1,38 @@
+<ion-content>
+  <ion-img src="/assets/icon/profile_image.jpg"></ion-img>
+  
+  <div class="ion-text-center"><h3><ion-label>{{user.username}}</ion-label></h3></div>
+  <div class="ion-text-center"><ion-label color="medium">{{user.email}}</ion-label></div>
+  
+  <ion-list>
+    <ion-item>
+      <ion-input [(ngModel)]="user.name" class="ion-text-end">Name</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.surname" class="ion-text-end">Surname</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Gender</ion-label>
+      <ion-select [(ngModel)]="user.gender">
+        <ion-select-option value="F">Female</ion-select-option>
+        <ion-select-option value="M">Male</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.age" class="ion-text-end" type="number" inputmode="numeric">Age</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.height" class="ion-text-end" type="number" inputmode="numeric">Height</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.weight" class="ion-text-end" type="number" inputmode="numeric">Weight</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.kcalGoal" class="ion-text-end" type="number" inputmode="numeric">Your goal</ion-input>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-text-center"><ion-button fill="clear" color="success" mode="ios" (click)="save()">Save</ion-button></div>
+
+  <div class="ion-text-center"><ion-button fill="clear" color="danger" mode="ios" (click)="logout()">Logout</ion-button></div>
+</ion-content>
