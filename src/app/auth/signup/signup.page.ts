@@ -58,7 +58,10 @@ export class SignupPage implements OnInit {
   }*/
 
   signup(){
-    // fare check su ion-input vuoti
+    if (this.username==null || this.email==null || this.email==null){
+      this.alertService.presentToast('Error! Please fill all fields');
+      return;
+    }
     this.authService.signup(this.username)
     .subscribe(
       user => {
